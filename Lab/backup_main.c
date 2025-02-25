@@ -1,7 +1,3 @@
-/*Diego da Silva Campos do Nascimento - Diegocamposrj
-Projeto Final-FarmaFast
-EmbarcaTech 2024/2025
-*/
 #include <stdio.h>
 #include <string.h>
 #include "pico/stdlib.h"
@@ -254,7 +250,6 @@ char* virtual_keypad_with_msg(const char* msg, int cursor_col, int max_length, i
 }
 
 // Verifica se a entrada fornecida corresponde ao código SUS armazenado.
-// Verifica se a entrada fornecida corresponde ao código SUS armazenado.
 bool verify_sus(const char* input) {
     return strcmp(input, SUS_CODE) == 0; // Compara as strings usando strcmp. Retorna 0 se forem iguais.
 }
@@ -270,42 +265,38 @@ void display_menu(int* selected) {
     lcd_set_cursor(0, 0); // Define o cursor para o início da primeira linha.
     // Exibe as opções de medicamentos, marcando a opção selecionada com ">".
     lcd_write_string(*selected == 0 ? ">1. Paracetamol" : " 1. Paracetamol");
-    lcd_set_cursor(0, 1); // Define o cursor para o início da segunda linha.
+    lcd_set_cursor(0, 1);// Define o cursor para o início da segunda linha.
     lcd_write_string(*selected == 1 ? ">2. Ibuprofeno" : " 2. Ibuprofeno");
 }
 
 // Função para o usuário selecionar um medicamento no menu.
 int select_medicine() {
     int selected = 0; // Inicializa a opção selecionada como 0 (Paracetamol).
-
-    // *** Esta parte foi modificada para melhorar a usabilidade ***
-    while(gpio_get(CONFIRM_BUTTON_PIN) == 0){ //espera o botão ser solto antes de começar o menu
-        sleep_ms(50);
-    }
-    display_menu(&selected); // Exibe o menu inicialmente
+    lcd_clear();
+    lcd_set_cursor(0, 0);
+    lcd_write_string("CONFIRM: ");
+    lcd_write_char(gpio_get(CONFIRM_BUTTON_PIN) ? '1' : '0');
+    sleep_ms(2000); // Aguarde 2 segundos para você visualizar
 
     while (true) { // Loop principal para navegação e seleção.
 
         if (!gpio_get(UP_BUTTON_PIN)) { // Se o botão UP for pressionado.
             if (selected > 0) selected--; // Decrementa a opção selecionada (limite superior).
             sleep_ms(200); // Delay para evitar leituras repetidas do botão.
-            display_menu(&selected); // Atualiza o menu no display.
         }
-
         if (!gpio_get(DOWN_BUTTON_PIN)) { // Se o botão DOWN for pressionado.
             if (selected < 1) selected++; // Incrementa a opção selecionada (limite inferior).
             sleep_ms(200); // Delay para evitar leituras repetidas do botão.
-            display_menu(&selected); // Atualiza o menu no display.
         }
-
         if (!gpio_get(CONFIRM_BUTTON_PIN)) { // Se o botão CONFIRM for pressionado.
             sleep_ms(50); // Pequeno atraso para "debounce".
-            if (!gpio_get(CONFIRM_BUTTON_PIN)) { // Confirma a seleção (segunda leitura para evitar falsos positivos).
+            if (!gpio_get(CONFIRM_BUTTON_PIN)) { //Confirma a seleção (segunda leitura para evitar falsos positivos).
                 sleep_ms(200); // Delay para evitar leituras repetidas do botão.
                 break; // Sai do loop de seleção.
             }
         }
-        sleep_ms(50); // Delay geral para evitar leituras repetidas dos botões.
+        display_menu(&selected);
+        sleep_ms(100); // Delay geral para evitar leituras repetidas dos botões.
     }
     return selected; // Retorna o índice do medicamento selecionado.
 }
