@@ -351,7 +351,7 @@ int main() {
             lcd_backlight(true); // Garante que o backlight esteja ligado ao detectar presença
             display_message("Bem Vindo. Seu remedio esta pronto!", true); // Exibe mensagem de boas-vindas.
 
-            display_message("Digite SUS:", false); / Solicita o código SUS.
+            display_message("Digite SUS:", false); // Solicita o código SUS.
             char* sus_input = virtual_keypad_with_msg("Digite SUS", 0, 9, 9); // Exige exatamente 9 caracteres
             if (!verify_sus(sus_input)) { // Verifica se o código SUS é válido.
                 display_message("Cartao Nao Aceito!", true); // Exibe mensagem de erro.
